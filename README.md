@@ -118,3 +118,6 @@ Please see `QA_REPORT.md` (located in the root of this repository) for:
 
 ## Author
 Jayasankar KR
+
+## Tester
+Shaik Aabid Farhan
