@@ -23,7 +23,7 @@ Functional validation of the core creation, state transition, and pagination flo
 | TC-09 | Invalid State Mutation (API Layer) | 1. Transmit `PATCH` payload with illegal status string | API layer rejects payload; Returns `422 Unprocessable Entity`. | PASS |
 | TC-10 | Not Found Exception Handling | 1. Navigate to `/tickets/{invalid_id}` | Application intercepts failure and routes to graceful 404 view. | PASS |
 | TC-11 | Data Permutation (Edit) | 1. Modify existing ticket title string | Payload accepted; Record updates successfully. | PASS |
-| TC-12 | Record Deletion | 1. Trigger delete action on existing record | Record is hard-deleted from persistence layer; UI remounts. | PASS |
+| TC-12 | Record Deletion | 1. Trigger delete action on existing record<br>2. Accept confirmation popup<br>3. Hit browser 'Back' button from 404 view | Record is hard-deleted from persistence layer; UI temporarily navigates to 404, when returning list reflects deletion. | PASS |
 | TC-13 | Boundary Analysis (Max Length) | 1. Input 255-character string in title | View handles string without breaking layout containment or truncating illegally. | PASS |
 | TC-14 | Malicious Payload (XSS) | 1. Input `<script>alert(1)</script>` | DOM sanitizes input; Renders strictly as encoded string. | PASS |
 

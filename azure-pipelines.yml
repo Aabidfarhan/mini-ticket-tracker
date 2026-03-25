@@ -1,0 +1,55 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  python.version: '3.11'
+  node.version: '18.x'
+
+stages:
+- stage: CI
+  jobs:
+  - job: BackendTests
+    displayName: 'Run Pytest Backend'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
+    
+    - script: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r backend/requirements.txt pytest
+        cd backend
+        pytest tests/
+      displayName: 'Run Backend Pytests'
+
+  - job: FrontendPlaywright
+    displayName: 'Run Playwright E2E'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '$(node.version)'
+      displayName: 'Install Node.js'
+    
+    - script: |
+        cd frontend
+        npm install
+        npx playwright install --with-deps
+      displayName: 'Install Playwright and Dependencies'
+      
+    - script: |
+        cd frontend
+        npx playwright test
+      displayName: 'Run Playwright Tests'
+      
+    - task: PublishPipelineArtifact@1
+      condition: always()
+      inputs:
+        targetPath: 'frontend/playwright-report'
+        artifact: 'playwright-report'
+        publishLocation: 'pipeline'
+      displayName: 'Publish Playwright Report Artifacts (Snapshots)'

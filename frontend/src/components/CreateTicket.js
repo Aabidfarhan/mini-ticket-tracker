@@ -10,16 +10,30 @@ const CreateTicket = () => {
   
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title || title.trim().length < 3) {
+        if (!title || title.trim().length === 0) {
+            setError("Title is required");
+            return;
+        }
+        if (title.trim().length < 3) {
             setError("Title must be at least 3 characters");
             return;
         }
-        await axios.post("http://127.0.0.1:8000/tickets", {
-            title,
-            description
-        });
-        alert("Ticket created");
-        navigate("/");
+        
+        try {
+            await axios.post("http://127.0.0.1:8000/tickets", {
+                title,
+                description
+            });
+            alert("Ticket created");
+            navigate("/");
+        } catch (err) {
+            if (err.response && err.response.data && err.response.data.detail) {
+                const detail = err.response.data.detail;
+                setError(Array.isArray(detail) ? detail[0].msg : "Validation Error");
+            } else {
+                setError("Failed to create ticket");
+            }
+        }
     };
 
     return (

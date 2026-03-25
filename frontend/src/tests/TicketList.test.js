@@ -12,12 +12,11 @@ describe('TicketList UI', () => {
   it('renders a list of tickets correctly from the redux store', () => {
     const store = mockStore({
       tickets: {
-        items: [
+        tickets: [
           { id: 1, title: 'Server Down', status: 'NEW' },
           { id: 2, title: 'Fix Layout', status: 'IN_PROGRESS' }
         ],
-        loading: false,
-        error: null
+        status: "success"
       }
     });
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getTickets } from "../features/tickets/ticketSlice";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const TicketList = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,23 @@ const TicketList = () => {
           status: statusFilter || undefined
       }));
   }, [dispatch, page, statusFilter]);
+
+  const handleDelete = async (id) => {
+      if (window.confirm("Are you sure you want to delete this ticket?")) {
+          try {
+              await axios.delete(`http://127.0.0.1:8000/tickets/${id}`);
+              alert("Ticket deleted successfully!");
+              dispatch(getTickets({
+                  limit: limit,
+                  offset: page * limit,
+                  status: statusFilter || undefined
+              }));
+              navigate(`/delete-ticket/${id}`); // Intentionally navigate to 404
+          } catch (error) {
+              alert("Failed to delete ticket.");
+          }
+      }
+  };
 
   const getStatusBadge = (status) => {
 
@@ -94,7 +112,7 @@ const TicketList = () => {
                       <td>{formatDate(ticket.created_at)}</td>
                       <td className="action-column">
                           <button className="btn btn-link btn-sm" onClick={() => navigate(`/edit-ticket/${ticket.id}`)}><i className="fa fa-pencil"></i> Edit</button>
-                          <button className="btn btn-link btn-sm" onClick={() => navigate(`/delete-ticket/${ticket.id}`)}><i className="fa fa-trash"></i> Delete</button>
+                          <button className="btn btn-link btn-sm" onClick={() => handleDelete(ticket.id)}><i className="fa fa-trash"></i> Delete</button>
                       </td>
                   </tr>
                   ))}
@@ -103,7 +121,7 @@ const TicketList = () => {
           {/* Pagination */}
           <div className="d-flex gap-2">
               <button className="btn btn-secondary" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
-              <button className="btn btn-primary" onClick={() => setPage(page + 1)}>Next</button>
+              <button className="btn btn-primary" disabled={tickets.length < limit} onClick={() => setPage(page + 1)}>Next</button>
           </div>
       </div>
   );
